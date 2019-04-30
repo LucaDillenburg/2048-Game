@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        game2048.cpp \
         main.cpp \
         window.cpp
 
 HEADERS += \
+        game2048.h \
         window.h
 
 FORMS += \

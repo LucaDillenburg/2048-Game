@@ -1,11 +1,16 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+//window and paint
 #include <QMainWindow>
 #include <QPainter>
 
+//events
 #include <QKeyEvent>
 #include <QPaintEvent>
+
+//game
+#include "game2048.h"
 
 using namespace std;
 
@@ -16,10 +21,14 @@ class Window;
 class Window : public QMainWindow
 {
 protected:
-    int qtd = 0;
-    char key;
+    //const for window size
+    constexpr static const float proportionWidthHeight = 0.78;
 
-    void keyPressEvent(QKeyEvent *event);
+    Game2048 *game;
+
+    void configureWindowDefaultSize();
+
+    virtual void keyPressEvent(QKeyEvent *event);
     void paintEvent(QPaintEvent *event);
 
     Q_OBJECT
