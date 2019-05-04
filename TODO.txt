@@ -1,0 +1,30 @@
+NEW:
+ - new buttons: 'restart' and 'random moves'
+ - change matrix size working
+ - space between buttons
+ - checks if user lost
+ - displays messages
+ - resize is working (not that good)
+ - bugs fixed: add blocks
+
+TODO now:
+ - set matrix as int and score as long int (see warnings and search for long and %lld), delete btnRandomMoves
+ - change btnRestart color, change window name
+ - window elements resize
+ - new features (add option "mode" in menu):
+   .time until 2048 block
+   .most points until X seconds
+
+----------------------------------------------
+
+MAIN FEATURES:
+  -> window
+      .window elements resize
+      .blocks showing up and moving until their final position
+      .actionOthers
+      .improve resize
+
+NEW FEATURES (uses Thread):
+ - time until 2048 block
+ - most points until X seconds
+ - add a block each X seconds (you can only move once between one block is added and the next)

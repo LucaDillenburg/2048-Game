@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Window</class>
+ <widget class="QMainWindow" name="Window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>498</width>
+    <height>412</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Window</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="btnRestart">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>88</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Restart</string>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnRandomMoves">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>30</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Random moves</string>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>498</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Change matrix order</string>
+    </property>
+    <addaction name="actionOrder2"/>
+    <addaction name="actionOrder3"/>
+    <addaction name="actionOrder4"/>
+    <addaction name="actionOrder5"/>
+    <addaction name="actionOrder6"/>
+    <addaction name="actionOrder8"/>
+    <addaction name="actionOrder10"/>
+    <addaction name="separator"/>
+    <addaction name="actionOther"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOrder2">
+   <property name="text">
+    <string>Matrix order: 2</string>
+   </property>
+  </action>
+  <action name="actionOrder3">
+   <property name="text">
+    <string>Matrix order: 3</string>
+   </property>
+  </action>
+  <action name="actionOrder4">
+   <property name="text">
+    <string>Matrix order: 4</string>
+   </property>
+  </action>
+  <action name="actionOrder5">
+   <property name="text">
+    <string>Matrix order: 5</string>
+   </property>
+  </action>
+  <action name="actionOther">
+   <property name="text">
+    <string>Other matrix order</string>
+   </property>
+  </action>
+  <action name="actionOrder6">
+   <property name="text">
+    <string>Matrix order: 6</string>
+   </property>
+  </action>
+  <action name="actionOrder8">
+   <property name="text">
+    <string>Matrix order: 8</string>
+   </property>
+  </action>
+  <action name="actionOrder10">
+   <property name="text">
+    <string>Matrix order: 10</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
