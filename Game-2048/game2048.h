@@ -10,6 +10,7 @@ class Game2048
 {
 protected:
     //Auxiliar Paint (for not repeating the same calculation each time that it paints)
+    int xTitle, yTitle, titleFontSize;
     int xScore, yScore, scoreWidth, scoreHeight, scoreFontSize;
     int matrixSize, xMatrix, yMatrix;
     int sizeBlock, blockFontSize, spaceBetweenBlocks;
@@ -18,8 +19,8 @@ protected:
     //Basic/Structural
     static const int DEFAULT_MATRIX_ORDER = 4;
     int matrixOrder;
-    long** blocksMatrix;
-    long long score;
+    int** blocksMatrix;
+    long int score;
     int numberOfFreeBlocks; //this variable will contain the number of free blocks (elem==0) in the matrix
     bool lost;
     bool hasMade2048Block;
@@ -47,27 +48,31 @@ public:
     bool addNewBlock(); //returns if the user lost
 
     //getters
-    long long getScore() const;
+    long int getScore() const;
     bool userLost() const;
 
     //draw
-    void configurePaint(const int &windowWidth, const int &windowHeight);
+    void configurePaint(const int &xMargin, const int &yMargin, const int &windowWidth, const int &windowHeight);
     void drawMatrix(QPainter&) const;
-    void drawScore(QPainter&) const;
+    void drawHeader(QPainter&) const;
 
 
     //Const Paint
+    //Title / Game Name
+    static const int percTitleFontSize         = 8;
+    static const int percTitleTopMargin        = 4 + Game2048::percTitleFontSize;
+    static const int percTitleLeftMarginMatrix = 2; //starting at the xMatrix
     //Score
-    static const int percScoreTopMargin     = 10;
-    static const int percScoreWidth         = 30;
-    static const int percScoreHeight        = 5;
-    static const int percScoreRightMargin   = 0; //relative to the matrix
-    static const int percScoreFontSize      = 50; //relative to the score height
+    static const int percScoreTopMargin        = 5;
+    static const int percScoreWidth            = 30;
+    static const int percScoreHeight           = 5;
+    static const int percScoreRightMargin      = 1; //relative to the matrix
+    static const int percScoreFontSize         = 50; //relative to the score height
     //Matrix
-    static const int percMatrixHorizMargins = 10;
-    static const int percMatrixTopMargin    = 15 + Game2048::percScoreTopMargin + Game2048::percScoreHeight;
-    static const int percBeteweenBlocks     = 10; //relative to the size of the block
-    static const int percBlockFontSize      = 30; //relative to the block size
+    static const int percMatrixHorizMargins    = 10;
+    static const int percMatrixTopMargin       = 10 + Game2048::percScoreTopMargin + Game2048::percScoreHeight;
+    static const int percBeteweenBlocks        = 10; //relative to the size of the block
+    static const int percBlockFontSize         = 30; //relative to the block size
 };
 
 #endif // GAME2048_H

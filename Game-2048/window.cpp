@@ -77,7 +77,7 @@ void Window::keyPressEvent(QKeyEvent *event) //move matrix
             if (lost)
             {
                 char userLostText[30];
-                sprintf(userLostText, "You made %lld points!", this->game->getScore());
+                sprintf(userLostText, "You made %ld points!", this->game->getScore());
                 QMessageBox::question(this, "You lost!", userLostText, QMessageBox::Ok);
             }
         }
@@ -95,7 +95,7 @@ void Window::paintEvent(QPaintEvent*)
 
     //draw everything
     this->game->drawMatrix(painter);
-    this->game->drawScore(painter);
+    this->game->drawHeader(painter);
 }
 
 
@@ -110,55 +110,88 @@ void Window::configureWindowDefaultSize()
 
 void Window::resizeEvent(QResizeEvent *event)
 {
-    //auxiliar consts
-    const int newWidth = event->size().width();
-    const int newHeight = event->size().height();
+    this->configureGamePaint();
+}
 
-    const float currProportionWidthHeight = (float)newWidth/(float)newHeight;
-    //if the proportion is approximately equal to the proportion (it's not always equal because the width and high can only be integers and not float)
-    if (currProportionWidthHeight >= Window::proportionWidthHeight - 0.005f &&
-            currProportionWidthHeight <= Window::proportionWidthHeight + 0.005f)
+void Window::configureGamePaint()
+{
+    //just the available space is considered (menu is not available)
+    const int marginTop = this->ui->menuBar->height() + (float)Window::percGameMarginTop/100.f * this->height();
+    const int height = this->height() - marginTop;
+    const int width = this->width();
+    //do not use this->height and this->width anymore in this method...
+
+    //same division as Window::proportionWidthHeight
+    const float sizeProportion = (float)width / (float)height;
+
+    int gameWidth, gameHeight;
+    if (sizeProportion > (float)Window::percPropDefaultSize/100.f)
+    //width is larger than needed, so height will be completely filled, but width will have blank spaces in both sides
     {
-        this->configurePaintWindowAndGame();
-        this->update();
-        return;
+        gameHeight = height;
+        gameWidth = this->widthFromHeight(gameHeight);
+    }else //height is larger than needed, so width will be completely filled, but height will have blank spaces in both top and bottom
+    {
+        gameWidth = width;
+        gameHeight = this->heightFromWidth(gameWidth);
     }
 
-    //porcentage of the new size compared to the old one
-    const float newWidthPerc  = (float)newWidth / (float)event->oldSize().width();
-    const float newHeightPerc = (float)newHeight / (float)event->oldSize().height();
+    const int xGame = (width - gameWidth)/2;
+    const int yGame = (height - gameHeight)/2 + marginTop;
 
-    //the direction that has changed the most will prevail
-    if (abs(1 - newWidthPerc) > abs(1 - newHeightPerc))
-    //height will change proportionally to the width
-        this->resize(newWidth, this->heightFromWidth(newWidth));
-    else
-    if (abs(1 - newWidthPerc) < abs(1 - newHeightPerc))
-    //width will change proportionally to the height
-        this->resize(this->widthFromHeight(newHeight), newHeight);
+    //configure game elements
+    this->game->configurePaint(xGame, yGame, gameWidth, gameHeight);
+
+    //configure window elements
+    //... (nothing to configure now, because there is no elements in the window except the menu)
 }
 
 int Window::widthFromHeight(const int &height)
 {
-    return height * Window::proportionWidthHeight;
+    return height * (float)Window::percPropDefaultSize/100.f;
 }
 
 int Window::heightFromWidth(const int &width)
 {
-    return width / Window::proportionWidthHeight;
+    return (100 * width) / Window::percPropDefaultSize;
 }
 
 
-//buttons
-void Window::on_btnRestart_clicked()
+//restart
+void Window::on_actionRestart_triggered()
 {
     this->game->restartGame();
     this->update();
     this->setFocus(); //so onKeyPressed is called when the user presses a key
 }
 
+//random moves
+void Window::on_actionRandomMoves_triggered()
+{
+    for(int i=0; i<Window::numberRandomMovesPerClick; i++)
+    {
+        int key, randomNum = rand() % 4;
+        switch(randomNum)
+        {
+            case 0: key = Qt::Key_Right; break;
+            case 1: key = Qt::Key_Left; break;
+            case 2: key = Qt::Key_Up; break;
+            default: key = Qt::Key_Down; break;
+        }
 
-//menu
+        //simulate user move (will show messages and show the change of the matrix)
+        QKeyEvent *keyPressedEvent = new QKeyEvent (QEvent::KeyPress, key, Qt::NoModifier);
+        QCoreApplication::postEvent(this, keyPressedEvent);
+        QKeyEvent *keyReleasedEvent = new QKeyEvent (QEvent::KeyRelease, key, Qt::NoModifier);
+        QCoreApplication::postEvent(this, keyReleasedEvent);
+
+        if (this->game->userLost())
+            break;
+    }
+}
+
+
+//change order
 void Window::on_actionOrder2_triggered()
 {
     this->changeMatrixOrder(2);
@@ -196,42 +229,7 @@ void Window::changeMatrixOrder(int matrixOrder)
 {
     //restart game with a diferent matrixOrder
     this->game->restartGame(matrixOrder);
-    this->game->configurePaint(this->width(), this->height()); //it doesn't need to configure Window elements
+    this->configureGamePaint(); //it doesn't need to configure Window elements
     this->update();
     this->setFocus(); //so onKeyPressed is called when the user presses a key
-}
-
-
-//other methods
-void Window::configurePaintWindowAndGame()
-{
-    //configure game elements (matrix and score)
-    this->game->configurePaint(this->width(), this->height());
-
-    //configure window elements
-    //...
-}
-
-void Window::on_btnRandomMoves_clicked()
-{
-    for(int i=0; i<Window::numberRandomMovesPerClick; i++)
-    {
-        int key, randomNum = rand() % 4;
-        switch(randomNum)
-        {
-            case 0: key = Qt::Key_Right; break;
-            case 1: key = Qt::Key_Left; break;
-            case 2: key = Qt::Key_Up; break;
-            default: key = Qt::Key_Down; break;
-        }
-
-        //simulate user move (will show messages and show the change of the matrix)
-        QKeyEvent *keyPressedEvent = new QKeyEvent (QEvent::KeyPress, key, Qt::NoModifier);
-        QCoreApplication::postEvent(this, keyPressedEvent);
-        QKeyEvent *keyReleasedEvent = new QKeyEvent (QEvent::KeyRelease, key, Qt::NoModifier);
-        QCoreApplication::postEvent(this, keyReleasedEvent);
-
-        if (this->game->userLost())
-            break;
-    }
 }

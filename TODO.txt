@@ -1,16 +1,10 @@
 NEW:
- - new buttons: 'restart' and 'random moves'
- - change matrix size working
- - space between buttons
- - checks if user lost
- - displays messages
- - resize is working (not that good)
- - bugs fixed: add blocks
-
-TODO now:
  - set matrix as int and score as long int (see warnings and search for long and %lld), delete btnRandomMoves
+ - window resize working perfectly (but now the window can be not proportional)
+ - designed modified: no more buttons, "2048" title and the window name, .ico changed
+
+TODO NOW:
  - change btnRestart color, change window name
- - window elements resize
  - new features (add option "mode" in menu):
    .time until 2048 block
    .most points until X seconds

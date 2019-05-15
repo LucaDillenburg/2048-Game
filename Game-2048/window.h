@@ -24,7 +24,8 @@ protected:
     Game2048 *game;
 
     //window size
-    constexpr static const float proportionWidthHeight = 0.78f;
+    static const int percPropDefaultSize = 93; //width / height
+    static const int percGameMarginTop = 0; //if menu height was already considered
     void configureWindowDefaultSize();
     int widthFromHeight(const int &height);
     int heightFromWidth(const int &width);
@@ -36,16 +37,10 @@ protected:
 
     //other methods
     void changeMatrixOrder(int matrixOrder); //used from menu
-    void configurePaintWindowAndGame();
-
-    //Paint
-    static const int percWidthBtnRestart = 7;
-    static const int percHeightBtnRestart = 4;
-    static const int percBtnRestartFontSize = 50;
-    static const int percXBtnRestart = Game2048::percMatrixHorizMargins;
+    void configureGamePaint();
 
     //others
-    static const int numberRandomMovesPerClick = 500;
+    static const int numberRandomMovesPerClick = 50;
 
     Q_OBJECT
 
@@ -65,8 +60,8 @@ private slots:
     void on_actionOther_triggered();
 
     //buttons
-    void on_btnRestart_clicked();
-    void on_btnRandomMoves_clicked();
+    void on_actionRestart_triggered();
+    void on_actionRandomMoves_triggered();
 
 private:
     Ui::Window *ui;

@@ -31,15 +31,15 @@ void Game2048::initialize(const int &matrixOrder, bool createNewMatrix)
 
     //allocate blocksMatrix and set the positions to 0
     if (createNewMatrix)
-        this->blocksMatrix = new long*[this->matrixOrder];
-    long ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
-    for (long **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer; matrixPointer++)
+        this->blocksMatrix = new int*[this->matrixOrder];
+    int ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
+    for (int **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer; matrixPointer++)
     {
         if (createNewMatrix)
-            *matrixPointer = new long[this->matrixOrder];
+            *matrixPointer = new int[this->matrixOrder];
 
-        long * const endArrayPointer = *matrixPointer + this->matrixOrder;
-        for (long *arrayPointer = *matrixPointer; arrayPointer != endArrayPointer; arrayPointer++)
+        int * const endArrayPointer = *matrixPointer + this->matrixOrder;
+        for (int *arrayPointer = *matrixPointer; arrayPointer != endArrayPointer; arrayPointer++)
             *arrayPointer = 0;
     }
 }
@@ -75,8 +75,8 @@ void Game2048::start()
 Game2048::~Game2048()
 {
     //deletes the dynamic alocated memory of the matrix
-    long ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
-    for (long **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer; matrixPointer++)
+    int ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
+    for (int **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer; matrixPointer++)
         delete[] *matrixPointer;
     delete[] this->blocksMatrix;
 }
@@ -121,7 +121,7 @@ bool Game2048::movement(const Direction &direction, bool actuallyMove, bool &fir
         {
             const int i = (slowIsI) ? slow : fast;
             const int j = (slowIsI) ? fast : slow;
-            const long curr = this->blocksMatrix[i][j];
+            const int curr = this->blocksMatrix[i][j];
 
             if (curr == 0)
                 currNumOfFreeBlocksInLine++;
@@ -137,7 +137,7 @@ bool Game2048::movement(const Direction &direction, bool actuallyMove, bool &fir
                     moved = true; //sum of two blocks
 
                     //input sum in last block with value
-                    const long newValueSumedBlock = curr * 2;
+                    const int newValueSumedBlock = curr * 2;
                     this->blocksMatrix[iLastNotFreeBlock][jLastNotFreeBlock] = newValueSumedBlock;
                     lastElemNotFreeSummed = true;
 
@@ -226,12 +226,12 @@ bool Game2048::addNewBlock()
 
     //finds (i,j) of the block to be added
     int numberOfFreeBlocksFound = 0;
-    long ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
+    int ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
     bool continueLoop = true; //to know if it will continue to execute the first loop from the nested loop
-    for (long **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer && continueLoop; matrixPointer++)
+    for (int **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer && continueLoop; matrixPointer++)
     {
-        long * const endArrayPointer = *matrixPointer + this->matrixOrder;
-        for (long *arrayPointer = *matrixPointer; arrayPointer != endArrayPointer; arrayPointer++)
+        int * const endArrayPointer = *matrixPointer + this->matrixOrder;
+        for (int *arrayPointer = *matrixPointer; arrayPointer != endArrayPointer; arrayPointer++)
             if (*arrayPointer == 0)
             {
                 if (numberOfFreeBlocksFound == newBlockIndex)
@@ -272,7 +272,7 @@ bool Game2048::checkLost() //returns if the user lost (does not set this->lost)
 
 
 //getters
-long long Game2048::getScore() const
+long int Game2048::getScore() const
 {
     return this->score;
 }
@@ -284,12 +284,12 @@ bool Game2048::userLost() const
 
 
 //draw
-void Game2048::configurePaint(const int &windowWidth, const int &windowHeight)
+void Game2048::configurePaint(const int &xMargin, const int &yMargin, const int &windowWidth, const int &windowHeight)
 {
     //score
     this->scoreWidth  = (float)Game2048::percScoreWidth/100.0f * windowWidth;
     this->scoreHeight = (float)Game2048::percScoreHeight/100.0f * windowHeight;
-    this->yScore = (float)Game2048::percScoreTopMargin/100.0f * windowHeight;
+    this->yScore = yMargin + (float)Game2048::percScoreTopMargin/100.0f * windowHeight;
     //font score
     this->scoreFontSize = this->scoreHeight * Game2048::percScoreFontSize/100;
 
@@ -303,11 +303,16 @@ void Game2048::configurePaint(const int &windowWidth, const int &windowHeight)
 
     //matrix
     this->matrixSize = this->sizeBlock * this->matrixOrder + this->spaceBetweenBlocks * (this->matrixOrder + 1);
-    this->xMatrix = (windowWidth-this->matrixSize)/2;
-    this->yMatrix = (float)Game2048::percMatrixTopMargin/100.0f * windowWidth;
+    this->xMatrix = xMargin + (windowWidth-this->matrixSize)/2;
+    this->yMatrix = yMargin + (float)Game2048::percMatrixTopMargin/100.0f * windowWidth;
+
+    //title
+    this->xTitle = this->xMatrix + (float)Game2048::percTitleLeftMarginMatrix/100.0f * windowWidth;
+    this->yTitle = yMargin + (float)Game2048::percTitleTopMargin/100.0f * windowHeight;
+    this->titleFontSize = (float)Game2048::percTitleFontSize/100.0f * windowHeight;
 
     //others
-    this->xScore = this->xMatrix+this->matrixSize - this->scoreWidth + (float)(Game2048::percScoreRightMargin)/100.0f * windowWidth;
+    this->xScore = this->xMatrix + this->matrixSize - this->scoreWidth - (float)(Game2048::percScoreRightMargin)/100.0f * windowWidth;
 }
 
 void Game2048::drawMatrix(QPainter& painter) const
@@ -325,13 +330,13 @@ void Game2048::drawMatrix(QPainter& painter) const
     const int xBlockFirstColumn = this->xMatrix + this->spaceBetweenBlocks;
     QRect blockRect (xBlockFirstColumn, this->yMatrix + this->spaceBetweenBlocks,
                      this->sizeBlock, this->sizeBlock); //position first block
-    long ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
-    for (long **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer; matrixPointer++)
+    int ** const endMatrixPointer = this->blocksMatrix + this->matrixOrder;
+    for (int **matrixPointer = this->blocksMatrix; matrixPointer!=endMatrixPointer; matrixPointer++)
     {
-        long * const endArrayPointer = *matrixPointer + this->matrixOrder;
-        for (long *arrayPointer = *matrixPointer; arrayPointer != endArrayPointer; arrayPointer++)
+        int * const endArrayPointer = *matrixPointer + this->matrixOrder;
+        for (int *arrayPointer = *matrixPointer; arrayPointer != endArrayPointer; arrayPointer++)
         {
-            const long currBlock = *arrayPointer;
+            const int currBlock = *arrayPointer;
 
             //get block color
             QColor *blockColor, *textColor;
@@ -381,21 +386,33 @@ void Game2048::drawMatrix(QPainter& painter) const
     }
 }
 
-void Game2048::drawScore(QPainter& painter) const
+void Game2048::drawHeader(QPainter& painter) const
 {
-    //draw rectangle
+    //DRAW 2048 LABEL
+        //set font size
+    QFont font = painter.font();
+    font.setPointSize(this->titleFontSize);
+    painter.setFont(font);
+        //draw text
+    painter.setPen(Qt::black);
+    painter.drawText(this->xTitle, this->yTitle, "2048");
+
+    //DRAW SCORE
+        //draw rectangle
     QRect scoreRect = QRect(this->xScore, this->yScore, this->scoreWidth, this->scoreHeight);
     painter.fillRect(scoreRect, QBrush(Qt::black, Qt::SolidPattern));
-
-    //set font size
-    QFont font = painter.font();
+        //set font size
     font.setPointSize(this->scoreFontSize);
     painter.setFont(font);
-
-    //draw text
+        //draw score
     painter.setPen(Qt::white);
+    const int horizontalMargin = 0.06f * this->scoreWidth;
+    const int verticalMargin = 0.12f * this->scoreHeight;
+    scoreRect.adjust(horizontalMargin, verticalMargin, -horizontalMargin, 0); //so it has some space between the text and the rectangle
+        // - label
+    painter.drawText(scoreRect, Qt::AlignLeft, "Score:");
+        // - number
     char scoreText[20];
     sprintf(scoreText, "%lld", this->score);
-    scoreRect.adjust(0,3,-10,0); //so it has some space between the left side of the rectangle and the text
     painter.drawText(scoreRect, Qt::AlignRight, scoreText);
 }
